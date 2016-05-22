@@ -1,5 +1,5 @@
 'use strict';
-var auth   = require('./index');
+var auth   = require('./lib/crypto');
 var srbEvent = require('lib_srbevent');
 
 setTimeout(

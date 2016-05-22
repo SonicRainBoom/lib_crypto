@@ -1,18 +1,25 @@
 {
-  "name": "lib_crypto",
-  "main": "index.js",
-  "version": "0.0.0",
-  "private": true,
-  "dependencies": {
+  "name"           : "lib_crypto",
+  "version"        : "0.0.0",
+  "private"        : true,
+  "dependencies"   : {
     "lib_srbevent": "github:sonicrainboom/lib_srbevent",
-    "node-forge": "^0.6.39"
+    "node-forge"  : "^0.6.39"
   },
-  "scripts": {
+  "scripts"        : {
     "postinstall": "typings i && tsc -p .",
-    "test": "node ./test.js"
+    "test"       : "node ./test.js"
   },
   "devDependencies": {
     "typescript": "^1.8.10",
-    "typings": "^0.8.1"
-  }
+    "typings"   : "^1.0.4"
+  },
+  "main"           : "lib/crypto.js",
+  "typings"        : "lib/crypto",
+  "files"          : [
+    "crypto.ts",
+    "test.js",
+    "tsconfig.json",
+    "typings.json"
+  ]
 }

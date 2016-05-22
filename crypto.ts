@@ -23,7 +23,7 @@ var hash           = forge.sha512.create();
 // var defaultKeySize = 512;
 var defaultKeySize = 4096;
 
-interface BigInteger {
+export interface BigInteger {
   s: number
   t: number
   data: Array<number>
