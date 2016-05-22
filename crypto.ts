@@ -18,6 +18,7 @@
 import {SRBEvent} from 'lib_srbevent';
 let forge          = require('node-forge');
 var pki            = forge.pki;
+var rsa            = pki.rsa;
 var ssh            = forge.ssh;
 var hash           = forge.sha512.create();
 // var defaultKeySize = 512;
@@ -27,6 +28,9 @@ export interface BigInteger {
   s: number
   t: number
   data: Array<number>
+  equals: (other: BigInteger) => boolean
+  compareTo: (other: BigInteger) => number
+  //And some more, but those are currently not needed.
 }
 
 export interface Key {
@@ -77,14 +81,8 @@ export class KeyStore {
 
   static fromPrivateKey(privateKey: PrivateKey): KeyStore {
     let store               = new KeyStore();
-    store.publicKey         = {
-      e      : privateKey.e,
-      n      : privateKey.n,
-      encrypt: ()=> {
-      },
-      verify : ()=> {
-      },
-    };
+    store.publicKey         = <PublicKey> rsa.setPublicKey(privateKey.n,
+                                                           privateKey.e);
     store.privateKey        = privateKey;
     store.publicFingerprint = ssh.getPublicKeyFingerprint(
       store.publicKey,
@@ -99,15 +97,8 @@ export class KeyStore {
   static fromPrivateKeyPem(privateKey: string): KeyStore {
     let store               = new KeyStore();
     store.privateKey        = <PrivateKey> pki.privateKeyFromPem(privateKey);
-    store.publicKey         = {
-      e      : store.privateKey.e,
-      n      : store.privateKey.n,
-      //TODO: Fix this to use the actual prototype function of node-forge's implementation.
-      encrypt: ()=> {
-      },
-      verify : ()=> {
-      },
-    };
+    store.publicKey         = <PublicKey> rsa.setPublicKey(store.privateKey.n,
+                                                           store.privateKey.e);
     store.publicFingerprint = ssh.getPublicKeyFingerprint(
       store.publicKey,
       {
@@ -130,7 +121,7 @@ export class KeyStore {
       }
     }
     if (privateKey) {
-      if (privateKey.indexOf('------BEGIN RSA PRIVATE KEY-----') === 0) {
+      if (privateKey.indexOf('-----BEGIN RSA PRIVATE KEY-----') === 0) {
         store.privateKey = <PrivateKey>pki.privateKeyFromPem(privateKey);
       }
     }
@@ -140,9 +131,20 @@ export class KeyStore {
     if (!store.privateKey && privateKey) {
       throw new Error('Could not extract private key');
     }
-    if ((store.publicKey.e !== store.privateKey.e)
-        || (store.publicKey.n !== store.privateKey.n)
-    ) {
+
+    let keysMatch = false;
+    if (store.privateKey) {
+      if (
+        (store.publicKey.e.equals(store.privateKey.e))
+        && (store.publicKey.n.equals(store.privateKey.n))
+      ) {
+        keysMatch = true;
+      } else {
+        throw new Error('public and private key do not match')
+      }
+    }
+
+    if (keysMatch || !store.privateKey) {
       store.publicFingerprint = <string> ssh.getPublicKeyFingerprint(
         store.publicKey,
         {
