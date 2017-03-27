@@ -1,6 +1,5 @@
 'use strict';
 var crypto   = require('./lib/crypto');
-var srbEvent = require('lib_srbevent');
 
 setTimeout(
   () => {

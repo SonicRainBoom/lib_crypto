@@ -14,7 +14,7 @@
     "typescript": "^2.1"
   },
   "main": "lib/crypto.js",
-  "typings": "lib/crypto",
+  "typings": "tsd",
   "files": [
     "crypto.ts",
     "test.js",
