@@ -15,14 +15,13 @@
  * limitations under the License.
  */
 
-import {SRBEvent} from 'lib_srbevent';
-let forge          = require('node-forge');
-var pki            = forge.pki;
-var rsa            = pki.rsa;
-var ssh            = forge.ssh;
-var hash           = forge.sha512.create();
-// var defaultKeySize = 512;
-var defaultKeySize = 4096;
+let forge            = require('node-forge');
+const pki            = forge.pki;
+const rsa            = pki.rsa;
+const ssh            = forge.ssh;
+const hash           = forge.sha512.create();
+
+const defaultKeySize = 4096;
 
 export interface BigInteger {
   s: number
@@ -58,7 +57,7 @@ export class KeyStore {
   static generate(bits?: number): KeyStore {
     bits = bits || defaultKeySize;
     if (bits < defaultKeySize) {
-      SRBEvent.warn(`The selected key-size of ${bits} is discouraged and below the recommendation of ${defaultKeySize}. It might be possible for an attacker to impersonate!`);
+      console.warn(`The selected key-size of ${bits} is discouraged and below the recommendation of ${defaultKeySize}. It might be possible for an attacker to impersonate!`);
     }
     let keypair             = pki.rsa.generateKeyPair(
       {
