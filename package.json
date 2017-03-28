@@ -13,8 +13,8 @@
   "devDependencies": {
     "typescript": "^2.1"
   },
-  "main": "lib/crypto.js",
-  "typings": "tsd",
+  "main": "./lib/crypto.js",
+  "types": "./tsd/crypto.d.ts",
   "files": [
     "crypto.ts",
     "test.js",
